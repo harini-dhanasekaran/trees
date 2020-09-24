@@ -1,0 +1,76 @@
+//find max sum in lvl order
+#include<iostream>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+using namespace std;
+class node{
+    public:
+      node* left;
+      int data;
+      node* right;
+};
+node* insert(node* p,int data){
+    node* t;
+    if(p==NULL){
+        t=new node;
+        t->data=data;
+        t->left=t->right=NULL;
+        return t;
+    }
+    if(data < p->data){
+        p->left=insert(p->left,data);
+    }
+    else if(data > p->data){
+        p->right=insert(p->right,data);
+    }
+    return t;
+}
+
+void print(node* p){
+    stack<node*> stk;
+    while(p!=NULL || !(stk.empty())){
+        if(p!=NULL){
+          stk.push(p);
+          p=p->left;
+        }
+        else
+        {
+           p=stk.top();
+           cout<<p->data<<" ";
+           stk.pop();
+           p=p->right;   
+        }
+    } 
+
+}
+int height(node *p){
+    int x,y;
+    if(p==NULL)
+      return 0;
+    x=height(p->left);
+    y=height(p->right);
+    return x>y?x+1:y+1;
+} 
+void lvlsum(node* p,int lvl,int sum[]){
+    if(p==NULL)
+      return;
+    sum[lvl]+=p->data;
+    lvlsum(p->left,lvl+1,sum);
+    lvlsum(p->right,lvl+1,sum);
+}
+int main(){
+    int ht;
+    node *root=NULL;
+    root=insert(root,30);
+    insert(root,33);
+    insert(root,25);
+    insert(root,10);
+    print(root);
+    ht=height(root);
+    int sum[ht]={0};
+    lvlsum(root,0,sum);
+    cout<<*max_element(sum,sum+ht);
+    return 0;
+}
