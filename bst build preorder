@@ -1,0 +1,71 @@
+//create bst using preorder
+
+
+#include<iostream>
+#include <stack>
+using namespace std;
+class node{
+    public:
+      node* left;
+      int data;
+      node* right;
+};
+node* root=NULL;
+void print(node* p){
+    stack<node*> stk;
+    while(p!=NULL || !(stk.empty())){
+        if(p!=NULL){
+          stk.push(p);
+          p=p->left;
+        }
+        else
+        {
+           p=stk.top();
+           cout<<p->data<<" ";
+           stk.pop();
+           p=p->right;   
+        }
+    } 
+
+}
+void createpre(node* root,int pre[]){
+    stack<node*> stk;
+    node* t,*in;
+    in=new node;
+    in->data=1000;
+    stk.push(in);
+    int i=0,n=8;
+    root=new node;
+    root->data=pre[i++];
+    root->right=root->left=NULL;
+    node *p=root;
+    while(i<n){
+        if(p->data>pre[i]){
+            t= new node;
+            t->data=pre[i++];
+            t->left=t->right=NULL;
+            p->left=t;
+            stk.push(p);
+            p=t;
+        }
+        else{
+        if(p->data<pre[i] && stk.top()->data>pre[i]){
+            t=new node;
+            t->data=pre[i++];
+            t->right=t->left=NULL;
+            p->right=t;
+            p=t;
+        }
+        else{
+            p=stk.top();
+            stk.pop();
+        }
+        }
+    }
+    print(root);
+}
+int main(){
+    int pre[9]={30,20,10,15,25,40,50,45};
+    createpre(root,pre);
+    return 0;
+}
