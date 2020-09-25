@@ -1,0 +1,134 @@
+// given example is for RL rotation of BST
+
+#include <iostream>
+#include <stack>
+using namespace std;
+class node{
+    public:
+    int data;
+    int height;
+    node* rchild;
+    node* lchild;
+}*root=NULL;
+
+int nodeHeight(node* p){
+    int hl,hr;
+    hl=p && p->lchild ?p->lchild->height :0;
+    hr=p && p->rchild ?p->rchild->height :0;
+    return hl>hr? hl+1:hr+1;
+}
+int balanceFactor(node *p){
+    int hl,hr;
+    hl=p && p->lchild ?p->lchild->height :0;
+    hr=p && p->rchild ?p->rchild->height :0;
+    return hl-hr;
+}
+node* LLrotation(node* p){
+    node *pl=p->lchild,*plr=pl->rchild;
+    pl->rchild=p;
+    p->lchild=plr;
+    p->height=nodeHeight(p);
+    pl->height=nodeHeight(pl);
+    if(root==p)
+      root=pl;
+    return pl; 
+}
+node* LRrotation(node* p){
+    node* pl=p->lchild,*plr=pl->rchild;
+    pl->lchild=plr->rchild;
+    pl->rchild=plr->lchild;
+
+    p->lchild=plr->rchild;
+
+    plr->lchild=pl;
+    plr->rchild=p;
+
+    plr->height=nodeHeight(plr);
+    pl->height=nodeHeight(pl);
+    p->height=nodeHeight(p);
+
+    if(root==p)
+      root=plr;
+    return plr;
+}
+node* RRrotation(node* p){
+    node* pr=p->rchild,*prl=pr->lchild;
+    pr->lchild=p;
+    p->rchild=prl;
+    pr->height=nodeHeight(pr);
+    p->height=nodeHeight(p);
+    if(p==root)
+      root=pr;
+    return pr;
+}
+
+node* RLrotation(node* p){
+    node  *pr=p->rchild,*prl=pr->lchild;
+
+    p->rchild=prl->lchild;
+    pr->lchild=prl->rchild;
+
+    prl->lchild=p;
+    prl->rchild=pr;
+
+    p->height=nodeHeight(p);
+    pr->height=nodeHeight(pr);
+    prl->height=nodeHeight(prl);
+    if(p==root)
+      root=prl;
+    return prl;
+}
+
+
+node* insert(node *p,int key){
+    if(p==NULL){
+        p=new node;
+        p->data=key;
+        p->height=1;
+        p->lchild=p->rchild=NULL;
+    }
+    else if(p->data>key)
+      p->lchild=insert(p->lchild,key);
+    else if(p->data<key)
+      p->rchild=insert(p->rchild,key);
+    p->height=nodeHeight(p);
+
+    if(balanceFactor(p)==2 && balanceFactor(p->lchild)==1)
+      return LLrotation(p);
+    else if(balanceFactor(p)==2 && balanceFactor(p->lchild)==-1)
+      return LRrotation(p);
+    else if(balanceFactor(p)==-2 && balanceFactor(p->rchild)==-1)
+      return RRrotation(p);
+    else if(balanceFactor(p)==-2 && balanceFactor(p->rchild)==1)
+      return RLrotation(p);
+    return p;
+}
+
+void print(node* p){
+    stack<node*> stk;
+    while(p!=NULL || !(stk.empty())){
+        if(p!=NULL){
+            stk.push(p);
+            cout<<p->data<<" ";
+            p=p->lchild;
+        }
+        else
+        {
+            p=stk.top();
+            stk.pop();
+            p=p->rchild;
+        }
+        
+    }
+}
+int main(){
+    root=insert(root,20);
+    insert(root,10);
+    insert(root,40);
+    insert(root,30);
+    insert(root,50);
+    insert(root,25);
+    insert(root,35);
+    print(root);
+    return 0;
+}
