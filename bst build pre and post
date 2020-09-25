@@ -1,5 +1,3 @@
-//create bst using preorder
-
 
 #include<iostream>
 #include <stack>
@@ -10,6 +8,7 @@ class node{
       int data;
       node* right;
 };
+
 node* root=NULL;
 void print(node* p){
     stack<node*> stk;
@@ -28,6 +27,16 @@ void print(node* p){
     } 
 
 }
+
+void printpost(node *p){
+    if(p==NULL)
+     return;
+    printpost(p->left);
+    printpost(p->right);
+    cout<<p->data<<" ";
+}
+
+
 void createpre(node* root,int pre[]){
     stack<node*> stk;
     node* t,*in;
@@ -64,8 +73,57 @@ void createpre(node* root,int pre[]){
     }
     print(root);
 }
+
+
+void createpost(node *root,int post[]){
+    stack<node*> stp;
+    node *t,*in=new node,*p;
+    in->data=0;
+    stp.push(in);
+    int i=7;
+    root=new node;
+    root->data=post[i--];
+    root->left=root->right=NULL;
+    p=root;
+    while(i>=0){
+        if(p->data<post[i]){
+            t=new node;
+            t->data=post[i--];
+            t->left=t->right=NULL;
+            p->right=t;
+            stp.push(p);
+            p=t;
+        }
+        else
+        {
+            if(p->data>post[i] && stp.top()->data<post[i]){
+                t=new node;
+                t->data=post[i--];
+                t->left=t->right=NULL;
+                p->left=t;
+                p=t;
+            }
+            else
+            {
+                p=stp.top();
+                stp.pop();
+            }
+            
+        }
+        
+    }
+    print(root);
+}
+
 int main(){
     int pre[9]={30,20,10,15,25,40,50,45};
+    int post[9]={15,10,25,20,45,50,40,30};
     createpre(root,pre);
+    cout<<endl;
+    root=NULL;
+    createpost(root,post);
     return 0;
 }
+
+
+
